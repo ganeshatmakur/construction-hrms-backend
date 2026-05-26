@@ -1,5 +1,3 @@
-# construction-hrms-backend
-
 <div align="center">
 
 # 🏗️ Construction HR Management System
