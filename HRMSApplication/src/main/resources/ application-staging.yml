@@ -1,0 +1,45 @@
+spring:
+  # Staging environment - use Supabase PostgreSQL with connection pooler
+  datasource:
+    url: jdbc:postgresql://db.xxxx.supabase.co:6543/postgres  # Use pooler port 6543, not direct 5432
+    username: postgres
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Ticket LF-205: Optimized for Supabase staging
+      maximum-pool-size: 20
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 270000      # 270s - must be < 300s Supabase idle timeout
+      keepalive-time: 120000     # 120s
+      leak-detection-threshold: 60000  # Detect leaks after 60s
+
+  # Staging Redis
+  redis:
+    host: redis-staging.internal
+    port: 6379
+    timeout: 5000
+    password: ${REDIS_PASSWORD}
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 2
+        max-wait: 5000ms
+
+logging:
+  level:
+    root: INFO
+    com.hrms: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: INFO
+
+# Staging-specific CORS
+app:
+  cors:
+    allowed-origins: https://staging.hrms.internal,https://admin-staging.hrms.internal
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: Content-Type,Authorization,X-Requested-With
+    allow-credentials: true
+    max-age: 3600

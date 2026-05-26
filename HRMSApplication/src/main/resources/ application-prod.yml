@@ -1,0 +1,57 @@
+spring:
+  # Production environment - high-availability Supabase setup
+  datasource:
+    url: jdbc:postgresql://db.xxxx.supabase.co:6543/postgres
+    username: postgres
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Ticket LF-205: Production-grade HikariCP settings
+      maximum-pool-size: 30        # Higher for production traffic
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 270000         # 270s - optimized for Supabase
+      keepalive-time: 120000
+      leak-detection-threshold: 60000
+
+  # Production Redis - high availability
+  redis:
+    host: redis-prod.internal
+    port: 6379
+    timeout: 5000
+    password: ${REDIS_PASSWORD}
+    jedis:
+      pool:
+        max-active: 16             # Higher concurrency for production
+        max-idle: 16
+        min-idle: 4
+        max-wait: 3000ms
+
+  # JPA settings for production
+  jpa:
+    hibernate:
+      ddl-auto: validate           # Never auto-update schema in production
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 30
+          fetch_size: 50
+        order_inserts: true
+        order_updates: true
+
+logging:
+  level:
+    root: WARN
+    com.hrms: INFO
+    org.springframework.security: WARN
+    org.springframework.data: WARN
+
+# Production-specific CORS
+app:
+  cors:
+    allowed-origins: https://hrms.company.com,https://app.company.com
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: Content-Type,Authorization,X-Requested-With,X-CSRF-Token
+    allow-credentials: true
+    max-age: 7200                  # Longer cache in production

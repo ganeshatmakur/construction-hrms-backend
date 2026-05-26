@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill /f /im java.exe)",
+      "Bash(mvn spring-boot:run)"
+    ]
+  }
+}

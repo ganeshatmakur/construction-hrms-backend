@@ -1,0 +1,99 @@
+spring:
+  application:
+    name: construction-hrms-backend
+
+  # JPA/Hibernate Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+        order_inserts: true
+        order_updates: true
+
+  # DataSource Configuration with HikariCP
+  datasource:
+    url: jdbc:postgresql://localhost:5432/construction_hrms
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 5000
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 57600000 # 16 hours in milliseconds
+
+  # Jackson Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+    time-zone: UTC
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
+    min-response-size: 1024
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.hrms: DEBUG
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Custom Application Properties
+app:
+  version: 1.0.0
+  overtime:
+    daily-standard-hours: 8
+    monthly-cap-hours: 60
+    sixteen-hour-flag-threshold: 16
+    rate-1x-multiplier: 1.0
+    rate-15x-multiplier: 1.5
+    rate-2x-multiplier: 2.0
+  cache:
+    active-workers-ttl-hours: 16
+    redis-fallback-enabled: true
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:3001"
+    allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+    allowed-headers: "Content-Type,Authorization,X-Requested-With"
+    allow-credentials: true
+    max-age: 3600
